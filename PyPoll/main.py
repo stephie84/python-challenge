@@ -1,6 +1,7 @@
 import csv,os
 
 polls = os.path.join('Resources', 'election_data.csv')
+output_file = os.path.join('Analysis', 'output.txt')
 
 #Import csv file
 
@@ -13,28 +14,44 @@ with open(polls) as csv_file:
 #Define variables
 
     total_votes = 0
+    candidates = []
+    candidate_votes = {}
+    percentage = 0
     
-    
-#Create a complete list of candidates who received votes
-    
-#The percentage of votes each candidate won
 
-#The total number of votes each candidate won
+    
 
-#The winner of the election based on popular vote
 
     for row in csv_reader:
 
         total_votes += 1
 
+        candidate = row[2]
 
+        if candidate not in candidates:
+            candidates.append(candidate)
+            candidate_votes[candidate] = 0
         
-
         
+        candidate_votes[candidate] += 1
 
+      
 
-    print('\n\nElection Results')
-    print('----------------------------')
-    print("Total Votes: " + str(total_votes))
-    print('----------------------------')
+    output = ('\n\nElection Results\n' +
+    '----------------------------\n' +
+    "Total Votes: " + str(total_votes) + '\n' +
+    '----------------------------\n') 
+
+#The percentage of votes each candidate won and the total number of votes each candidate won
+    for candidate in candidate_votes:
+        output += (f"{candidate}: {round(candidate_votes[candidate] / (sum(candidate_votes.values()))*100, 2)} ({candidate_votes[candidate]})\n----------------------------\n")
     
+#The winner of the election based on popular vote
+    maxvotes = max(candidate_votes , key=candidate_votes.get)
+    output += ("Winner: " + (maxvotes) +   '\n----------------------------')
+
+    print(output)
+    #Write data to txt file
+    
+    with open(output_file, "w") as txt_file:
+        txt_file.write(output)
